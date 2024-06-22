@@ -1167,3 +1167,119 @@ void mkdir(byte cwd, char *dirname)
   // printString("Directory created successfully\n");
 }
 ```
+
+
+
+# _Screenshoot Percobaan_ :
+
+1. Output Compile :
+ 
+  A. `make build` :
+   
+![Screenshot 2024-06-22 185321](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/05ffd54e-403c-4c8c-af50-1d01c27a1d9c)
+
+
+  B. `make generate test=...` di Terminal :
+
+    `make generate test=1` :
+
+![Screenshot 2024-06-22 185801](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/c850bc5e-7bf5-4a3e-ac33-cda766af529c)
+
+     `make generate test=2` :
+
+![Screenshot 2024-06-22 190421](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/52c66f4f-7e71-4420-9e17-821316c65aed)
+
+     `make generate test=3` :
+
+![Screenshot 2024-06-22 190703](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/dec2f33b-d239-4833-ae7e-d804a829c0d0)
+
+     `make generate test=4` :
+
+![Screenshot 2024-06-22 190915](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/29460c6a-5c99-42c9-a0c2-cc9993d05a7a)
+
+  
+C. `make build run` :
+    
+   
+![Screenshot 2024-06-22 185321](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/88e0328d-57ee-41ae-a188-38abd743cf63)
+
+![Screenshot 2024-06-22 185620](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/e2e27335-8ddb-4bd3-a533-6adf82fcffc0)
+
+D. `make run` :
+
+![Screenshot 2024-06-22 185835](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/64a10ad3-13e6-4e03-bea9-918bbd3b317e)
+
+
+2. Output Bochs Emulator `make generate test=...` 
+  
+`make generate test=1` : 
+     
+![Screenshot 2024-06-22 190236](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/d6d80151-3c59-49ab-ab23-44fbc8466633)
+
+
+   `make generate test=2` :
+
+![Screenshot 2024-06-22 190557](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/9bdfe614-47c0-44ec-9c1c-cc2791129657)
+
+  `make generate test=3` :
+
+![Screenshot 2024-06-22 190805](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/fef934c6-c7d6-49f2-a809-74247a5ba7a5)
+
+  `make generate test=4` :
+
+![Screenshot 2024-06-22 191054](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/17bffbb8-6ef5-4d2d-acc4-670268ddb92e)
+
+
+3. Output Bochs Emulator `cd, ls, mv, cp, cat, mkdir` :
+   
+Implementasi `cd`
+
+![Screenshot 2024-06-22 191221](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/23f9744d-52f2-45e3-976a-40e25a1bf70b)
+
+
+   Implementasi `ls`
+
+![Screenshot 2024-06-22 191343](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/09c0748e-459a-4aea-8664-673f93f281e3)
+
+
+   Implementasi `mv` :
+
+![Screenshot 2024-06-22 192509](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/30256fd4-cdc1-46bb-9680-7e239341fb51)
+
+   Implementasi `cp` :
+
+![Screenshot 2024-06-22 193113](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/bc8e9790-fb88-4f5d-9406-4790e07b8927)
+
+   Implementasi `cat` :
+
+![Screenshot 2024-06-22 192023](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/92ba2529-6bd4-46ed-b287-64bdb575733f)
+
+
+   Implementasi `mkdir` :
+
+![Screenshot 2024-06-22 191524](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/06274a54-b41d-403a-9259-7116fa1ba54e)
+
+
+### NOTA BANE : 
+Untuk menjalankan program Kernel ini diperlukan tahap yang benar, 
+Berikut tahapanya :
+1. Jalankan `make build run` dulu di Terminal.
+2. Tunggu booting sampai keluar `MengOS:$/`  di bochs emulator.
+3. Pastikan saat `make build` itu kurang dari `7680 byte` agar `MengOS:/$` di bochs emulator tidak menghilang.
+4. Jalankan `make generate test=...` di Terminal ->
+   Pilih salah satu saja :
+   `make generate test=1`
+   `make generate test=2`
+   `make generate test=3`
+   `make generate test=4`
+5. Kemudian `make run`
+6. Kemudian coba test case yang akan digunakan
+7. Matikan bochs emulator apabila sudah digunakan
+8. Untuk menjalankan program ulang atau ingin memakai test generate yang lain, ulangi step 1-7 lagi
+9. Program sudah bisa dipakai
+
+
+<br>
+<div align="center">
+<h1>END</h1>
+</div>
