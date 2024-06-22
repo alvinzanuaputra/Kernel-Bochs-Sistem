@@ -4,7 +4,7 @@ Apa??? Bikin kernel lagi???? :(
 
 [Looking for the English version?](./README-EN.md)
 
-## Pengenalan
+###  Pengenalan
 
 Pada final praktikum, kita akan melanjutkan `task-4` dari praktikum modul 4 yang sebelumnya. Kali ini, kita akan membuat sebuah filesystem sederhana yang dapat digunakan untuk menyimpan file-file yang kita buat. Filesystem yang akan kita buat ini akan menggunakan metode penyimpanan data yang sederhana, yaitu dengan menyimpan data file ke dalam blok-blok yang telah disediakan oleh filesystem. Jika kalian sudah tidak sabar ingin langsung mengerjakan task-task yang ada, bisa search `TODO` pada workspace ini. Berikut adalah gambaran yang akan kalian kerjakan pada final praktikum kali ini.
 
@@ -12,11 +12,11 @@ Pada final praktikum, kita akan melanjutkan `task-4` dari praktikum modul 4 yang
 - Melengkapi kernel untuk dapat membaca dan menulis file ke dalam filesystem yang telah kita buat.
 - Membuat shell sederhana yang dapat digunakan untuk mengakses filesystem yang telah kita buat.
 
-## Pencerdasan
+###  Pencerdasan
 
 Penjelasan pada praktikum final akan sering menggunakan angka heksadesimal. Penggunaan angka heksadesimal ditandai dengan prefix `0x`. Jika kalian belum terbiasa dengan angka heksadesimal, kalian dapat menggunakan kalkulator yang mendukung mode heksadesimal atau menggunakan konversi angka heksadesimal ke desimal.
 
-### Struktur Disk
+### # Struktur Disk
 
 Jika kalian sudah melewati modul 4, pasti sudah tidak asing lagi dengan struktur disk yang akan kita gunakan. Disk yang kita gunakan terdiri dari beberapa blok. Selanjutnya blok akan disebut sektor. Setiap sektor memiliki ukuran 512 bytes. Sektor pertama akan digunakan sebagai boot sector, yang berisi hasil kompilasi dari `bootloader.asm`. Sektor kedua hingga sektor ke-15 akan digunakan untuk menyimpan kode teks dari kernel yang kita buat.
 
@@ -32,7 +32,7 @@ Satu sektor akan digambarkan sebagai satu blok. Alamat sektor akan dinomori ulan
 
 Untuk mencari alamat sektor pada isi file `floppy.img`, kita dapat mengonversi alamat sektor ke dalam alamat byte dengan cara seperti pada gambar di atas.
 
-### Struktur Filesystem
+### # Struktur Filesystem
 
 Filesystem yang akan dibuat akan menggunakan beberapa komponen, yaitu map, node, dan data. Map akan disimpan sebanyak 1 sektor pada sektor `0x100`. Node akan disimpan sebanyak 2 sektor pada sektor `0x101` dan `0x102`. Data akan disimpan sebanyak 1 sektor pada sektor `0x103`.
 
@@ -40,7 +40,7 @@ Berikut adalah ilustrasi dari struktur filesystem yang akan kita buat.
 
 ![struktur-filesystem](./assets/struktur-filesystem.png)
 
-### Struktur Filesystem Map
+### # Struktur Filesystem Map
 
 Map akan digunakan untuk menandai blok-blok pada disk yang telah digunakan oleh file. Setiap blok akan memiliki status `0x00` jika sektor yang bersangkutan belum digunakan, dan `0x01` jika sektor yang bersangkutan telah digunakan. Contohnya, karena pada sektor `0x00` telah digunakan oleh bootloader, maka isi dari map ke-0 adalah `0x01`. Komponen map akan digunakan ketika kita ingin menulis file ke dalam disk untuk mengetahui sektor mana saja yang dapat kita gunakan.
 
@@ -50,7 +50,7 @@ Berikut adalah ilustrasi dari komponen map.
 
 Map akan berukuran 1 sektor (512 bytes). Item ke-0 hingga item ke-15 pada map akan memiliki status `0x01` karena telah digunakan oleh sistem operasi. Item ke-16 hingga item ke-255 akan memiliki status `0x00` karena belum digunakan. Mulai dari item ke-256 (`0x100`) hingga item ke 511 (`0x1FF`) akan ditandai sebagai sektor yang telah digunakan. Hal ini dikarenakan kita tidak memperbolehkan file untuk menulis data pada sektor yang berada di atas sektor `0x100`.
 
-### Struktur Filesystem Node
+### # Struktur Filesystem Node
 
 Node akan digunakan untuk menyimpan informasi dari file atau direktori yang kita buat. Setiap node akan memiliki ukuran 16 bytes. Sehingga, total akan terdapat 64 item node yang bisa disimpan. Berikut adalah ilustrasi dari komponen node.
 
@@ -68,7 +68,7 @@ Berikut adalah penjelasan dari setiap item pada node.
 
 - **Node name**: kolom ketiga hingga kolom terakhir pada item node berguna sebagai nama dari node tersebut. Nama dari node akan memiliki panjang maksimal 13 karakter (karakter terakhir adalah karakter null).
 
-### Struktur Filesystem Data
+### # Struktur Filesystem Data
 
 Komponen data akan digunakan untuk petunjuk sektor-sektor yang digunakan untuk menyimpan data file. Setiap item data akan memiliki ukuran 16 bytes. Sehingga, total akan terdapat 32 item data yang bisa disimpan. Berikut adalah ilustrasi dari komponen data.
 
@@ -76,15 +76,15 @@ Komponen data akan digunakan untuk petunjuk sektor-sektor yang digunakan untuk m
 
 Setiap kolom pada item data akan menunjukkan alamat sektor yang digunakan untuk menyimpan data file. Karena satu byte hanya dapat menunjukkan alamat sektor hingga 255 (`0xFF`), maka kita hanya dapat menyimpan alamat sektor hingga sektor `0xFF`. Oleh karena itu, item map ke-256 hingga akhir akan ditandai sebagai sektor yang telah digunakan.
 
-### Ilustrasi Filesystem
+### # Ilustrasi Filesystem
 
 Berikut adalah ilustrasi dari ketiga komponen filesystem yang telah dijelaskan sebelumnya.
 
 ![filesystem-illustration](./assets/filesystem-illustration.png)
 
-## Instruksi Pengerjaan
+###  Instruksi Pengerjaan
 
-### Task 1 - Membuat syscall readSector dan writeSector
+### # Task 1 - Membuat syscall readSector dan writeSector
 
 Pada task ini, kalian diminta untuk membuat syscall `readSector` dan `writeSector` yang akan digunakan untuk membaca dari disk ke memory dan menulis dari memory ke disk.
 
@@ -125,7 +125,7 @@ void readSector(byte* buf, int sector) {
 
 Untuk `writeSector`, kalian dapat menggunakan implementasi yang sama dengan `readSector` dengan mengganti nilai register `ah` dengan `0x03` yang menunjukkan operasi `write`.
 
-### Task 2 - Implementasi fsRead
+### # Task 2 - Implementasi fsRead
 
 Pada [`filesystem.h`](./src/filesystem.h), terdapat beberapa konstanta dan tipe data yang akan digunakan untuk membantu dalam implementasi filesystem. Kalian diminta untuk mengimplementasikan fungsi `fsRead` yang akan digunakan untuk membaca direktori atau file dari filesystem. Fungsi `fsRead` akan menerima parameter sebagai berikut.
 
@@ -173,7 +173,7 @@ Langkah-langkah yang harus dilakukan pada fungsi `fsRead` adalah sebagai berikut
 
 6. Set `status` dengan `FS_R_SUCCESS`.
 
-### Task 3 - Implementasi fsWrite
+### # Task 3 - Implementasi fsWrite
 
 Selanjutnya kalian diminta untuk mengimplementasikan fungsi `fsWrite` yang akan digunakan untuk menulis file ke dalam filesystem. Fungsi `fsWrite` akan menerima parameter yang sama dengan `fsRead` sebagai berikut.
 
@@ -218,13 +218,13 @@ Langkah-langkah yang harus dilakukan pada fungsi `fsWrite` adalah sebagai beriku
 
 9. Set `status` dengan `FS_W_SUCCESS`.
 
-### Task 4 - Implementasi printCWD
+### # Task 4 - Implementasi printCWD
 
 Setelah berhasil mengimplementasikan fungsi `fsRead` dan `fsWrite`, selanjutnya adalah pembuatan shell sederhana. Shell akan menggunakan read-eval-print-loop (REPL) yang akan menerima perintah dari user dan mengeksekusi perintah tersebut. Pada task ini, kalian diminta untuk mengimplementasikan fungsi `printCWD` yang akan digunakan untuk menampilkan _current working directory_ (CWD) dari shell.
 
 Fungsi `printCWD` akan menerima parameter `byte cwd` yang menunjukkan node index dari _current working directory_. Fungsi akan menampilkan path dari root (`/`) hingga node yang ditunjuk oleh `cwd`. Jika `cwd` adalah `0xFF`, maka path yang ditampilkan adalah `/`. Setiap node yang ditampilkan akan dipisahkan oleh karakter `/`.
 
-### Task 5 - Implementasi parseCommand
+### # Task 5 - Implementasi parseCommand
 
 Selanjutnya, kalian diminta untuk mengimplementasikan fungsi `parseCommand` yang akan digunakan untuk memisahkan perintah yang diberikan oleh user. Fungsi `parseCommand` akan menerima parameter sebagai berikut.
 
@@ -238,7 +238,7 @@ void parseCommand(char* buf, char* cmd, char arg[2][64]);
 
 Karena hanya akan ada 2 argumen yang diberikan oleh user, maka `arg` akan memiliki ukuran 2. Jika argumen yang diberikan oleh user adalah 1, maka `arg[1]` akan berisi string kosong. Jika argumen yang diberikan oleh user adalah 0, maka `arg[0]` dan `arg[1]` akan berisi string kosong.
 
-### Task 6 - Implementasi cd
+### # Task 6 - Implementasi cd
 
 Fungsi `cd` akan digunakan untuk mengubah _current working directory_ dari shell. Berikut adalah spesifikasi dari fungsi `cd`.
 
@@ -252,7 +252,7 @@ Fungsi `cd` akan digunakan untuk mengubah _current working directory_ dari shell
 
 - Implementasi relative path dan absolute path tidak diwajibkan.
 
-### Task 7 - Implementasi ls
+### # Task 7 - Implementasi ls
 
 Fungsi `ls` akan digunakan untuk menampilkan isi dari direktori. Berikut adalah spesifikasi dari fungsi `ls`.
 
@@ -266,7 +266,7 @@ Fungsi `ls` akan digunakan untuk menampilkan isi dari direktori. Berikut adalah 
 
 - Implementasi relative path dan absolute path tidak diwajibkan.
 
-### Task 8 - Implementasi mv
+### # Task 8 - Implementasi mv
 
 Fungsi `mv` akan digunakan untuk memindahkan file atau direktori. Berikut adalah spesifikasi dari fungsi `mv`.
 
@@ -280,7 +280,7 @@ Fungsi `mv` akan digunakan untuk memindahkan file atau direktori. Berikut adalah
 
 - Implementasi relative path dan absolute path tidak diwajibkan.
 
-### Task 9 - Implementasi cp
+### # Task 9 - Implementasi cp
 
 Fungsi `cp` akan digunakan untuk menyalin file. Berikut adalah spesifikasi dari fungsi `cp`.
 
@@ -294,7 +294,7 @@ Fungsi `cp` akan digunakan untuk menyalin file. Berikut adalah spesifikasi dari 
 
 - Implementasi relative path dan absolute path tidak diwajibkan.
 
-### Task 10 - Implementasi cat
+### # Task 10 - Implementasi cat
 
 Fungsi `cat` akan digunakan untuk menampilkan isi dari file. Berikut adalah spesifikasi dari fungsi `cat`.
 
@@ -302,17 +302,17 @@ Fungsi `cat` akan digunakan untuk menampilkan isi dari file. Berikut adalah spes
 
 - Implementasi relative path dan absolute path tidak diwajibkan.
 
-### Task 11 - Implementasi mkdir
+### # Task 11 - Implementasi mkdir
 
 Fungsi `mkdir` akan digunakan untuk membuat direktori. Berikut adalah spesifikasi dari fungsi `mkdir`.
 
 - `mkdir <dirname>` akan membuat direktori yang berada di bawah _current working directory_.
 
-## Testing
+###  Testing
 
 Untuk melakukan testing, kalian dapat menjalankan `make build run` pada terminal untuk melakukan kompilasi dan menjalankan OS. Setelah itu tutup OS dan jalankan `make generate test=1` untuk melakukan populasi file dan direktori ke dalam filesystem (ubah nilai 1 dengan nomor test yang sesuai). Setelah itu, jalankan kembali OS dengan `make run` dan coba perintah shell yang telah kalian implementasikan.
 
-### `make generate test=1`
+### # `make generate test=1`
 
 Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 
@@ -328,7 +328,7 @@ Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 └─ dir3
 ```
 
-### `make generate test=2`
+### # `make generate test=2`
 
 Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 
@@ -342,7 +342,7 @@ Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 └─ file-63
 ```
 
-### `make generate test=3`
+### # `make generate test=3`
 
 Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 
@@ -356,7 +356,7 @@ Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 └─ 8192_13
 ```
 
-### `make generate test=4`
+### # `make generate test=4`
 
 Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 
@@ -375,7 +375,7 @@ Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 └─ doang
 ```
 
-## Tips
+###  Tips
 
 - Untuk debugging filesystem, kalian dapat mengecek menggunakan hexedit pada Linux atau HxD pada Windows. Dengan informasi sektor map `0x100`, node `0x101` dan `0x102`, serta data `0x103`, kalian dapat mengetahui data yang tersimpan pada filesystem. Untuk mendapatkan offset byte dari sektor, kalian dapat menggunakan rumus `offset = sektor * 512` atau `offset = sektor * 0x200`. Sebagai contoh untuk mengetahui isi dari filesystem map, dapat membuka HxD dan hexedit dengan menekan `Ctrl + G` dan memasukkan offset byte dari sektor map (`0x100 * 0x200 = 0x20000`).
 
@@ -402,9 +402,9 @@ Berikut adalah struktur filesystem yang akan digunakan pada test ini.
 # _JAWABAN_ :
 
 
-### Task-1 Membuat syscall readSector dan writeSector
+### # Task-1 Membuat syscall readSector dan writeSector
 
-#### File `kernel.c` :
+### ###  File `kernel.c` :
 ```bash
 // TODO: 1. Implement writeSector function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void writeSector(byte* buf, int sector) {
@@ -429,9 +429,9 @@ void writeSector(byte* buf, int sector) {
 ```
 
 
-### Task 2 - Implementasi fsRead
+### # Task 2 - Implementasi fsRead
 
-#### File `filesystem.c` :
+### ###  File `filesystem.c` :
 ```bash
 
 // TODO: 2. Implement fsRead function [----------------------------- DONEEEEEEEE -------------------------------------------------]
@@ -479,9 +479,9 @@ void fsRead(struct file_metadata* metadata, enum fs_return* status) {
 ```
 
 
-### Task 3 - Implementasi fsWrite
+### # Task 3 - Implementasi fsWrite
 
-#### File `filesystem.c` :
+### ###  File `filesystem.c` :
 ```bash
 // TODO: 3. Implement fsWrite function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 // Menulis file ke sistem file nya
@@ -552,9 +552,9 @@ void fsWrite(struct file_metadata* metadata, enum fs_return* status) {
 ```
 
 
-### Task 4 - Implementasi printCWD
+### # Task 4 - Implementasi printCWD
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 4. Implement printCWD function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void printCWD(byte cwd)
@@ -589,9 +589,9 @@ void printCWD(byte cwd)
 ```
 
 
-### Task 5 - Implementasi parseCommand
+### # Task 5 - Implementasi parseCommand
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 5. Implement parseCommand function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void parseCommand(char *buf, char *cmd, char arg[2][64])
@@ -655,9 +655,9 @@ void parseCommand(char *buf, char *cmd, char arg[2][64])
 ```
 
 
-### Task 6 - Implementasi cd
+### # Task 6 - Implementasi cd
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 6. Implement cd function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void cd(byte *cwd, char *dirname)
@@ -718,9 +718,9 @@ void cd(byte *cwd, char *dirname)
 ```
 
 
-### Task 7 - Implementasi ls
+### # Task 7 - Implementasi ls
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 7. Implement ls function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void ls(byte cwd, char *dirname)
@@ -779,9 +779,9 @@ void ls(byte cwd, char *dirname)
 ```
 
 
-### Task 8 - Implementasi mv
+### # Task 8 - Implementasi mv
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 8. Implement mv function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void mv(byte cwd, char *src, char *dst)
@@ -910,9 +910,9 @@ void mv(byte cwd, char *src, char *dst)
 ```
 
 
-### Task 9 - Implementasi cp
+### # Task 9 - Implementasi cp
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 9. Implement cp function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void cp(byte cwd, char *src, char *dst)
@@ -1061,9 +1061,9 @@ void cp(byte cwd, char *src, char *dst)
 ```
 
 
-### Task 10 - Implementasi cat
+### # Task 10 - Implementasi cat
 
-#### File `shell.c` :
+### ###  File `shell.c` :
 ```bash
 // TODO: 10. Implement cat function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void cat(byte cwd, char *filename)
@@ -1098,8 +1098,8 @@ void cat(byte cwd, char *filename)
 ```
 
 
-### Task 11 - Implementasi mkdir
-#### File `kernel.c` :
+### # Task 11 - Implementasi mkdir
+### ###  File `kernel.c` :
 ```bash
 // TODO: 11. Implement mkdir function [----------------------------- DONEEEEEEEE -------------------------------------------------]
 void mkdir(byte cwd, char *dirname)
@@ -1172,106 +1172,113 @@ void mkdir(byte cwd, char *dirname)
 
 # _Screenshoot Percobaan_ :
 
-1. Output Compile :
+## 1. Output Compile :
  
-  A. `make build` :
+  ### A. `make build` :
    
 ![Screenshot 2024-06-22 185321](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/05ffd54e-403c-4c8c-af50-1d01c27a1d9c)
 
 
-  B. `make generate test=...` di Terminal :
+  ### B. `make generate test=...` di Terminal :
 
-    `make generate test=1` :
+   #### `make generate test=1` :
 
 ![Screenshot 2024-06-22 185801](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/c850bc5e-7bf5-4a3e-ac33-cda766af529c)
 
-     `make generate test=2` :
+   #### `make generate test=2` :
 
 ![Screenshot 2024-06-22 190421](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/52c66f4f-7e71-4420-9e17-821316c65aed)
 
-     `make generate test=3` :
+   #### `make generate test=3` :
 
 ![Screenshot 2024-06-22 190703](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/dec2f33b-d239-4833-ae7e-d804a829c0d0)
 
-     `make generate test=4` :
+   #### `make generate test=4` :
 
 ![Screenshot 2024-06-22 190915](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/29460c6a-5c99-42c9-a0c2-cc9993d05a7a)
 
   
-C. `make build run` :
+### C. `make build run` :
     
    
 ![Screenshot 2024-06-22 185321](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/88e0328d-57ee-41ae-a188-38abd743cf63)
 
 ![Screenshot 2024-06-22 185620](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/e2e27335-8ddb-4bd3-a533-6adf82fcffc0)
 
-D. `make run` :
+### D. `make run` :
 
 ![Screenshot 2024-06-22 185835](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/64a10ad3-13e6-4e03-bea9-918bbd3b317e)
 
 
-2. Output Bochs Emulator `make generate test=...` 
+# 2. Output Bochs Emulator `make generate test=...` 
   
-`make generate test=1` : 
+## `make generate test=1` : 
      
 ![Screenshot 2024-06-22 190236](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/d6d80151-3c59-49ab-ab23-44fbc8466633)
 
 
-   `make generate test=2` :
+   ##  `make generate test=2` :
 
 ![Screenshot 2024-06-22 190557](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/9bdfe614-47c0-44ec-9c1c-cc2791129657)
 
-  `make generate test=3` :
+  ## `make generate test=3` :
 
 ![Screenshot 2024-06-22 190805](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/fef934c6-c7d6-49f2-a809-74247a5ba7a5)
 
-  `make generate test=4` :
+  ## `make generate test=4` :
 
 ![Screenshot 2024-06-22 191054](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/17bffbb8-6ef5-4d2d-acc4-670268ddb92e)
 
 
-3. Output Bochs Emulator `cd, ls, mv, cp, cat, mkdir` :
+# 3. Output Bochs Emulator `cd, ls, mv, cp, cat, mkdir` :
    
-Implementasi `cd`
+## Implementasi `cd`
 
 ![Screenshot 2024-06-22 191221](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/23f9744d-52f2-45e3-976a-40e25a1bf70b)
 
 
-   Implementasi `ls`
+   ### Implementasi `ls`
 
 ![Screenshot 2024-06-22 191343](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/09c0748e-459a-4aea-8664-673f93f281e3)
 
 
-   Implementasi `mv` :
+  ### Implementasi `mv` :
 
 ![Screenshot 2024-06-22 192509](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/30256fd4-cdc1-46bb-9680-7e239341fb51)
 
-   Implementasi `cp` :
+   ### Implementasi `cp` :
 
 ![Screenshot 2024-06-22 193113](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/bc8e9790-fb88-4f5d-9406-4790e07b8927)
 
-   Implementasi `cat` :
+   ### Implementasi `cat` :
 
 ![Screenshot 2024-06-22 192023](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/92ba2529-6bd4-46ed-b287-64bdb575733f)
 
 
-   Implementasi `mkdir` :
+   ### Implementasi `mkdir` :
 
 ![Screenshot 2024-06-22 191524](https://github.com/alvinzanuaputra/kernel-bochs/assets/140075243/06274a54-b41d-403a-9259-7116fa1ba54e)
 
 
-### NOTA BANE : 
+##### NOTA BANE : 
 Untuk menjalankan program Kernel ini diperlukan tahap yang benar, 
+
 Berikut tahapanya :
 1. Jalankan `make build run` dulu di Terminal.
 2. Tunggu booting sampai keluar `MengOS:$/`  di bochs emulator.
 3. Pastikan saat `make build` itu kurang dari `7680 byte` agar `MengOS:/$` di bochs emulator tidak menghilang.
 4. Jalankan `make generate test=...` di Terminal ->
+
    Pilih salah satu saja :
+
    `make generate test=1`
+
    `make generate test=2`
+
    `make generate test=3`
+
    `make generate test=4`
+
 5. Kemudian `make run`
 6. Kemudian coba test case yang akan digunakan
 7. Matikan bochs emulator apabila sudah digunakan
