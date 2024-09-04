@@ -1,6 +1,10 @@
 # MengOS
 
-Apa??? Bikin kernel lagi???? :(
+
+## Repository Template
+```c
+git clone https://github.com/sisop-its-s24/praktikum-final.git
+```
 
 [Looking for the English version?](./README-EN.md)
 
